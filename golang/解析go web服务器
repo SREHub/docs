@@ -1,0 +1,24 @@
+几行代码搭建一个web服务器
+package main
+
+import (
+        "fmt"
+        "net/http"
+        "io"
+)
+
+func HelloServer(w http.ResponseWriter, req *http.Request) {
+        io.WriteString(w, "hello, world!\n")
+}
+
+func main() {
+        http.HandleFunc("/hello/", HelloServer)
+        err := http.ListenAndServe(":10086", nil)
+        if err != nil {
+                fmt.Println(err)
+        }
+
+}
+
+访问IP：11086/hello/ 页面输出hello world。
+很简单就搭建了一个web服务器，但是这中间go语言为我们做了什么呢？
