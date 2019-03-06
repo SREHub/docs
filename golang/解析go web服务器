@@ -20,5 +20,22 @@ func main() {
 
 }
 
-访问IP：11086/hello/ 页面输出hello world。
+访问IP：10086/hello/ 页面输出hello world。
 很简单就搭建了一个web服务器，但是这中间go语言为我们做了什么呢？
+用通俗的语言来描述这件事情：
+第一步、服务器启动，等待客户的连接请求。
+第二步、接收用户的连接，并处理。
+第三步、返回结果给用户，断开连接。
+用技术语言来描述这件事情：
+第一步、创建Listen Socket, 监听指定的端口, 等待客户端请求到来。
+第二步、Listen Socket接受客户端的请求, 得到Client Socket, 接下来通过Client Socket与客户端通信。
+第三步、处理客户端的请求, 首先从Client Socket读取HTTP请求的协议头, 如果是POST方法, 还可能要读取客户端提交的数据, 
+然后交给相应的handler处理请求, handler处理完毕准备好客户端需要的数据, 通过Client Socket写给客户端。
+
+那么我们刚实现的web服务器是如何监听端口的呢，看我们的代码是调用了ListenAndServe函数,那么其底层是怎么处理的呢？
+1.首先初始化一个server对象，然后调用了net.Listen("tcp", addr)，也就是底层用TCP协议搭建了一个服务，然后监控我们设置的端口。
+2.端口监听之后，调用serve函数，这个函数就是处理接收客户端的请求信息。这个函数里面起了一个for{}，首先通过Listener接收请求，其次创建一个Conn，
+最后单独开了一个goroutine，把这个请求的数据当做参数扔给这个conn去服务：go c.serve()。这个就是高并发体现了，用户的每一次请求都是在一个新的goroutine去服务，相互不影响。
+3.conn首先会解析request:c.readRequest(),然后获取相应的handler:handler := c.server.Handler，也就是我们刚才在调用函数ListenAndServe时候的第二个参数，
+我们前面例子传递的是nil，也就是为空，那么默认获取handler = DefaultServeMux,这个变量就是一个路由器，它用来匹配url跳转到其相应的handle函数，那么这个我们有设置过吗?有，
+我们调用的代码里面第一句不是调用了http.HandleFunc("/", sayhelloName)嘛。这个作用就是注册了请求/的路由规则，当请求uri为"/"，路由就会转到函数sayhelloName，DefaultServeMux会调用ServeHTTP方法，这个方法内部其实就是调用sayhelloName本身，最后通过写入response的信息反馈到客户端。
