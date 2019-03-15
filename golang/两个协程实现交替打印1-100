@@ -1,0 +1,47 @@
+思路：
+起三个channel，一个控制主协程，等两个协程都结束再退出。
+其他两个协程之间互相读取，交替打印1-100。
+当然这是我根据自己的思路想的版本，网上还有更优秀的版本，参考：https://studygolang.com/articles/16833
+看上去好像更简洁一些。
+
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	p1 := make(chan int, 1)
+	p2 := make(chan int, 1)
+	p3 := make(chan string, 1)
+	p1 <- 1
+	go func() {
+		for {
+			h := <-p1
+			if h < 100 {
+				fmt.Println("channel 1 ...", h)
+				h++
+				p2 <- h
+			} else {
+				p2 <- h
+				break
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			j := <-p2
+			if j <= 100 {
+				fmt.Println("channel 2 ...", j)
+				j++
+				p1 <- j
+			} else {
+				p3 <- "end"
+				break
+			}
+		}
+	}()
+	hh := <-p3
+	fmt.Println(hh)
+}
