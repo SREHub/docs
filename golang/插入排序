@@ -1,0 +1,17 @@
+插入排序（英语：Insertion Sort）是一种简单直观的排序算法。
+它的工作原理是通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。
+func insertpaixu(s []int) {
+     sl:=len(s)
+     if sl < 2 {
+        return
+     } 
+     for i:=1;i<sl;i++ {
+         for j:=i;j>0&&s[j]<s[j-1];j-- {
+             swap(s,j,j-1)
+         }
+     }
+}
+
+func swap(s []int,i int,j int) {
+     s[i],s[j] = s[j],s[i]
+}
