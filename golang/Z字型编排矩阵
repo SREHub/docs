@@ -1,0 +1,82 @@
+package main
+
+import (
+"fmt"
+)
+//声明一个偏移量
+type Offset struct {
+     off_x,off_y int 
+}
+
+//判断是不是同一个方向
+func isSameOffset(a Offset,b Offset) bool {
+     return a.off_x==b.off_x&&a.off_y==b.off_y
+}
+
+//一共有四个方向可以走
+var E = Offset{0,1}
+var SW = Offset{1,-1}
+var S = Offset{1,0}
+var NE = Offset{-1,1}
+
+//判断下一步该往哪里走
+func changeOffset(cx int,cy int,cp Offset,maxX int,maxY int) Offset {
+     if (maxX==1) {
+       return E
+     } else if (maxY==1) {
+       return S 
+     } else if (cx == maxX-1){
+       if (isSameOffset(cp,SW)) {
+          return E
+       }
+       return NE
+     } else if (cy==maxY-1){
+       if (isSameOffset(cp,NE)) {
+          return S
+       }
+       return SW
+     } else if (cx==0){
+       if (isSameOffset(cp,NE)) {
+          return E
+       }
+       return SW
+     } else if (cy==0){
+       if isSameOffset(cp,SW) {
+          return S
+       }
+       return NE
+     } else {
+       return cp;
+     }
+     
+}
+//Z字型编排矩阵
+func ZscanMatrix(m int,n int){
+     ma :=make([][]int,m)
+     for i:=0;i<m;i++{
+         ma[i] = make([]int,n)
+     }
+     cx := 0
+     cy := 0
+     cp := NE
+     i := 0
+     for (cx!=m-1||cy!=n-1){
+          ma[cx][cy]=i
+          fmt.Println(cx,cy,i)
+          cp = changeOffset(cx,cy,cp,m,n)
+          cx +=cp.off_x
+          cy +=cp.off_y
+          i++
+      }
+      ma[cx][cy]=i
+      fmt.Println(ma)
+      for _,v:=range ma {
+          fmt.Println(v)
+      }
+}
+
+func main(){
+    m:=2
+    n:=4
+    ZscanMatrix(m,n)
+}
