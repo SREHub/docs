@@ -1,0 +1,53 @@
+3.归并排序（先分开再合并）
+func mergesort(a []int) []int{
+     if len(a)==1 {
+        return a
+     }
+     m:=len(a)/2
+     mergesort(a[:m])
+     mergesort(a[m:])
+     return merge(mergesort(a[:m]),mergesort(a[m:]))
+}
+
+func merge(a,b []int) []int {
+     sizea,sizeb:=len(a),len(b)
+     c:=[]int{}
+     i,j:=0,0
+     for i<sizea && j<sizeb {
+         if a[i]<b[j] {
+            c=append(c,a[i])
+            i++
+         } else {
+            c=append(c,b[j])
+            j++
+         }
+     }
+     if i >=sizea{
+        c=append(c,b[j:sizeb]...)
+     }
+     if j >=sizeb{
+        c=append(c,a[i:sizea]...)
+     }
+     return c
+}
+4.快速排序(每一次把序列分成比某个值大和小的两部分)
+func quicksort(a []int) []int{
+     if len(a)<=1{
+        return a
+     }
+     i,mid:=1,a[0]
+     head,tail:=0,len(a)-1
+     for head < tail {
+         if a[i]>mid{
+            a[i],a[tail]=a[tail],a[i]
+            tail--
+         } else {
+           a[i],a[head]=a[head],a[i]
+           head++
+           i++
+         }
+     }
+    quicksort(a[:head])
+    quicksort(a[head+1:])
+    return a
+}
