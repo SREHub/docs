@@ -26,3 +26,18 @@ func simpleselectsort(a []int){
          }
      }
 }
+3.简单插入排序
+func insertsort(a []int){
+     for i:=1;i<len(a);i++{
+         if a[i]<a[i-1]{
+            temp:=a[i]
+            var j int
+            for j=i-1;j>=0;j--{
+                 if a[j]>temp {
+                    a[j+1]=a[j]
+                 }
+            }
+            a[j+1]=temp
+         }
+     }
+}
